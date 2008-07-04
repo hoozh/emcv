@@ -38,6 +38,7 @@
 //
 // Contributors:
 //    * Shiqi Yu (Shenzhen Institute of Advanced Technology, Chinese Academy of Sciences)
+//    * Shushan Chai (Shenzhen Institute of Advanced Technology, Chinese Academy of Sciences)
 
 #include "cxcore.h"
 #include <stdio.h>
@@ -193,3 +194,121 @@ cvSaveImage( const char* filename, const IplImage * image )
     
     return 0;
 }
+
+#ifdef DM64X_NETWORK
+#include <netmain.h>
+
+// save as Embedded file
+CV_IMPL int
+efs_cvSaveImage( const char* filename, const IplImage * image )
+{
+    int channels;
+    EFS_FILE * p;
+    BmpFileHead bmpfilehead;
+    BmpInfoHead bmpinfohead;
+    RGBA rgba;
+    int step, modbytes, idx;
+   
+    int imageLength;
+    char *pData;
+
+    CV_FUNCNAME( "cvSaveImageEfs" );
+    __BEGIN__;
+
+    channels = image->nChannels;
+    if( channels != 3 && channels != 1)
+        CV_ERROR( CV_BadNumChannels, "Only 1 or 3-channel image is supported" );
+
+    if( !filename || strlen(filename) == 0 ||
+       strlen(filename) >= EFS_FILENAME_MAX)
+    {
+        CV_ERROR( CV_StsNullPtr, "null filename" );
+    }
+       
+    //
+   
+    modbytes = (image->width*channels)%4;
+    step = modbytes ? ((image->width*channels)-modbytes+4)  : (image->width*channels);
+   
+    // image size
+   
+    imageLength = 0;
+    {
+       // header
+       
+       imageLength += sizeof(BmpFileHead);
+       imageLength += sizeof(BmpInfoHead);
+   
+       // color table
+
+        if(channels==1)
+        {
+            imageLength += sizeof(RGBA)*256;
+        }
+
+        // data
+      
+        imageLength += step*image->height;
+    }
+   
+    // alloc memory
+   
+    pData = (char*)cvAlloc(imageLength);
+   
+    // create embedded file
+   
+    efs_createfilecb((char*)filename, imageLength, (UINT8*)pData,
+                             (EFSFUN)cvFree_, (UINT32)pData );
+       
+    // open file
+
+    p = efs_fopen((char*)filename, "wb");
+    if(!p)
+        CV_ERROR( CV_StsNullPtr, "Can not create file" );
+   
+    //bmpfilehead = (BmpFileHead *)cvAlloc(sizeof(BmpFileHead));
+    //bmpinfohead = (BmpInfoHead *)cvAlloc(sizeof(BmpInfoHead));
+   
+    memset(&bmpfilehead, 0, sizeof(BmpFileHead));
+    memset(&bmpinfohead, 0, sizeof(BmpInfoHead));
+    memset(&rgba, 0, sizeof(RGBA));
+   
+    bmpfilehead.type1='B';
+    bmpfilehead.type2='M';
+   
+    bmpinfohead.imageSize = ( 2+sizeof(BmpInfoHead)+image->height*step );
+    bmpinfohead.startPosition = (channels==3) ? (2+sizeof(BmpInfoHead)) : (2+sizeof(BmpInfoHead)+1024);
+    bmpinfohead.length = 40;
+    bmpinfohead.width = (image->width);
+    bmpinfohead.height = (image->height);
+    bmpinfohead.colorPlane = (1);
+    bmpinfohead.bitColor = (channels==3) ?(24) : 8;
+    bmpinfohead.realSize = (image->height*step);
+
+    //write header
+    efs_fwrite(&bmpfilehead, sizeof(BmpFileHead), 1, p);
+    efs_fwrite(&bmpinfohead, sizeof(BmpInfoHead), 1, p);
+
+    //write
+    if(channels==1)
+    {
+        for(idx =0; idx<256; idx++)
+        {
+            rgba.R=idx;
+            rgba.G=idx;
+            rgba.B=idx;
+            rgba.A = 0;
+            efs_fwrite(&rgba, sizeof(RGBA), 1, p);
+        }
+    }
+   
+    for(idx = image->height-1; idx >=0 ; idx--)
+        efs_fwrite(image->imageData+image->widthStep*idx, step, 1, p);
+   
+    efs_fclose(p);
+    __END__;
+   
+    return 0;
+}
+
+#endif   // DM64X_NETWORK
