@@ -62,6 +62,11 @@ extern "C" {
 CVAPI(int) cvSaveImage( const char* filename, const IplImage * image );
 CVAPI(IplImage*) cvLoadImage( const char* filename, int iscolor CV_DEFAULT(0));
 
+// save as Embedded file
+#ifdef DM64X_NETWORK
+CVAPI(int) efs_cvSaveImage( const char* filename, const IplImage * image );
+#endif
+
 /****************************************************************************************\
 *          Array allocation, deallocation, initialization and access to elements         *
 \****************************************************************************************/
