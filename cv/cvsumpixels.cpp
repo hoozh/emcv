@@ -120,7 +120,7 @@ CvStatus cvIntegralImage_8u32s64s_C1R( const uchar* src, int srcstep,
             return CV_NULLPTR_ERR;                              
         }                                                       
                                                                 
-        buf = (int*)cvStackAlloc((size.width + 1 )* sizeof(buf[0]));
+        buf = (int*)cvAlloc((size.width + 1 )* sizeof(buf[0]));
         sum[-1] = tilted[-1] = 0;                               
         sqsum[-1] = 0;                                          
                                                                 
@@ -192,7 +192,8 @@ CvStatus cvIntegralImage_8u32s64s_C1R( const uchar* src, int srcstep,
                 tilted[x] = t0 + t1 + tilted[x - tiltedstep - 1];
                 buf[x] = t0;                                    
             }                                                   
-        }                                                       
+        }
+        cvFree(&buf);
     }                                                           
                                                                 
     return CV_OK;                                               
@@ -215,7 +216,8 @@ cvIntegral( const CvArr* image, CvArr* sumImage,
     CvMat sqsum_stub, *sqsum = (CvMat*)sumSqImage;
     CvMat tilted_stub, *tilted = (CvMat*)tiltedSumImage;
     int coi0 = 0, coi1 = 0, coi2 = 0, coi3 = 0;
-    int depth, cn;
+    //int depth;
+    int cn;
     int src_step, sum_step, sqsum_step, tilted_step;
     CvSize size;
 
@@ -267,7 +269,7 @@ cvIntegral( const CvArr* image, CvArr* sumImage,
     if( coi0 || coi1 || coi2 || coi3 )
         CV_ERROR( CV_BadCOI, "COI is not supported by the function" );
 
-    depth = CV_MAT_DEPTH(src->type);
+    //depth = CV_MAT_DEPTH(src->type);
     cn = CV_MAT_CN(src->type);
 
 

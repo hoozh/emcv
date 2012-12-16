@@ -50,19 +50,20 @@
 #define _CXCORE_MISC_H_
 
 #include <limits.h>
-#ifdef __GNUC__
-    #undef alloca
-    #define alloca __builtin_alloca
-#elif defined WIN32 || defined _WIN32 || defined WIN64 || defined _WIN64 || \
-      defined WINCE || defined _MSC_VER || defined __BORLANDC__
-    #include <malloc.h>
-#elif defined HAVE_ALLOCA_H
-    #include <alloca.h>
-#elif defined HAVE_ALLOCA
-    #include <stdlib.h>
-#else
-    #error "No alloca!"
-#endif
+
+//#ifdef __GNUC__
+//    #undef alloca
+//    #define alloca __builtin_alloca
+//#elif defined WIN32 || defined _WIN32 || defined WIN64 || defined _WIN64 || \
+//      defined WINCE || defined _MSC_VER || defined __BORLANDC__
+//    #include <malloc.h>
+//#elif defined HAVE_ALLOCA_H
+//    #include <alloca.h>
+//#elif defined HAVE_ALLOCA
+//    #include <stdlib.h>
+//#else
+//    #error "No alloca!"
+//#endif
 /****************************************************************************************\
 *                              Compile-time tuning parameters                            *
 \****************************************************************************************/
@@ -103,7 +104,7 @@
 
 /* the alignment of all the allocated buffers */
 #define  CV_MALLOC_ALIGN    32
-#end
+#endif
 
 /* default alignment for dynamic data strucutures, resided in storages. */
 #define  CV_STRUCT_ALIGN    ((int)sizeof(double))
@@ -142,7 +143,7 @@
 
 
 /* ! DO NOT make it an inline function */
-#define cvStackAlloc(size) cvAlignPtr( (void*)(alloca((size) + CV_MALLOC_ALIGN)), CV_MALLOC_ALIGN )
+//#define cvStackAlloc(size) cvAlignPtr( (void*)(alloca((size) + CV_MALLOC_ALIGN)), CV_MALLOC_ALIGN )
 
 #if defined _MSC_VER || defined __BORLANDC__
     #define CV_BIG_INT(n)   n##I64
@@ -718,7 +719,7 @@ typedef enum CvCmpOp {
 
 typedef struct CvFuncTable
 {
-    void*   fn_2d[CV_DEPTH_MAX];
+   void*   fn_2d[CV_DEPTH_MAX];
 }
 CvFuncTable;
 

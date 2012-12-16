@@ -197,10 +197,11 @@ cvSum( const CvArr* arr )
 
     __BEGIN__;
 
-    int type, coi = 0;
-    int mat_step;
-    CvSize size;
-    CvMat stub, *mat = (CvMat*)arr;
+    //int type, coi = 0;
+    //int mat_step;
+    //CvSize size;
+    //CvMat stub, ;
+    CvMat *mat = (CvMat*)arr;
 	
 	if(CV_IS_IMAGE(arr))
 	{

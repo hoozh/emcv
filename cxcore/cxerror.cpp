@@ -171,7 +171,7 @@ cvGuiBoxReport( int code, const char *func_name, const char *err_msg,
     if( code != CV_StsBackTrace && code != CV_StsAutoTrace )
     {
         size_t msg_len = strlen(err_msg ? err_msg : "") + 1024;
-        char* message = (char*)alloca(msg_len);
+        char* message = (char*)cvAlloc(msg_len);
         char title[100];
 
         wsprintf( message, "%s (%s)\nin function %s, %s(%d)\n\n"
@@ -185,6 +185,7 @@ cvGuiBoxReport( int code, const char *func_name, const char *err_msg,
 
         int answer = MessageBox( NULL, message, title, MB_ICONERROR|MB_ABORTRETRYIGNORE|MB_SYSTEMMODAL );
 
+		cvFree(&message);
         if( answer == IDRETRY )
         {
             CV_DBG_BREAK();

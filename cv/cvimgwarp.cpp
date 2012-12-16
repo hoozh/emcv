@@ -126,7 +126,7 @@ static CvStatus CV_STDCALL
 icvResize_NN_8u_C1R( const uchar* src, int srcstep, CvSize ssize,
                      uchar* dst, int dststep, CvSize dsize, int pix_size )
 {
-    int* x_ofs = (int*)cvStackAlloc( dsize.width * sizeof(x_ofs[0]) );
+    int* x_ofs = (int*)cvAlloc( dsize.width * sizeof(x_ofs[0]) );
     int pix_size4 = pix_size / sizeof(int);
     int x, y, t;
 
@@ -188,6 +188,7 @@ icvResize_NN_8u_C1R( const uchar* src, int srcstep, CvSize ssize,
         }
     }
 
+	if(x_ofs) cvFree(&x_ofs);
     return CV_OK;
 }
 
@@ -715,12 +716,15 @@ cvResize( const CvArr* srcarr, CvArr* dstarr, int method )
             {
                 int area = iscale_x*iscale_y;
                 int srcstep = src->step / CV_ELEM_SIZE(depth);
-                int* ofs = (int*)cvStackAlloc( (area + dsize.width*cn)*sizeof(int) );
+                int* ofs = (int*)cvAlloc( (area + dsize.width*cn)*sizeof(int) );
                 int* xofs = ofs + area;
                 CvResizeAreaFastFunc func = (CvResizeAreaFastFunc)areafast_tab.fn_2d[depth];
 
                 if( !func )
+				{
+					cvFree(&ofs);
                     CV_ERROR( CV_StsUnsupportedFormat, "" );
+				}
                 
                 for( sy = 0, k = 0; sy < iscale_y; sy++ )
                     for( sx = 0; sx < iscale_x; sx++ )
@@ -735,6 +739,8 @@ cvResize( const CvArr* srcarr, CvArr* dstarr, int method )
 
                 IPPI_CALL( func( src->data.ptr, src->step, ssize, dst->data.ptr,
                                  dst->step, dsize, cn, ofs, xofs ));
+
+				cvFree(&ofs);
             }
             else
             {
@@ -748,9 +754,9 @@ cvResize( const CvArr* srcarr, CvArr* dstarr, int method )
                     CV_ERROR( CV_StsUnsupportedFormat, "" );
 
                 buf_size = buf_len*2*sizeof(float) + ssize.width*2*sizeof(CvDecimateAlpha);
-                if( buf_size < CV_MAX_LOCAL_SIZE )
-                    buf = (float*)cvStackAlloc(buf_size);
-                else
+                //if( buf_size < CV_MAX_LOCAL_SIZE )
+                //    buf = (float*)cvStackAlloc(buf_size);
+                //else
                     CV_CALL( temp_buf = buf = (float*)cvAlloc(buf_size));
                 sum = buf + buf_len;
                 xofs = (CvDecimateAlpha*)(sum + buf_len);
@@ -813,9 +819,9 @@ cvResize( const CvArr* srcarr, CvArr* dstarr, int method )
                 CV_ERROR( CV_StsUnsupportedFormat, "" );
 
             buf_size = width*2*sizeof(float) + (width + dsize.height)*sizeof(CvResizeAlpha);
-            if( buf_size < CV_MAX_LOCAL_SIZE )
-                buf0 = (float*)cvStackAlloc(buf_size);
-            else
+            //if( buf_size < CV_MAX_LOCAL_SIZE )
+            //    buf0 = (float*)cvStackAlloc(buf_size);
+            //else
                 CV_CALL( temp_buf = buf0 = (float*)cvAlloc(buf_size));
             buf1 = buf0 + width;
             xofs = (CvResizeAlpha*)(buf1 + width);
@@ -895,9 +901,9 @@ cvResize( const CvArr* srcarr, CvArr* dstarr, int method )
             CV_ERROR( CV_StsUnsupportedFormat, "" );
         
         buf_size = width*(4*sizeof(float) + sizeof(xofs[0]));
-        if( buf_size < CV_MAX_LOCAL_SIZE )
-            buf[0] = (float*)cvStackAlloc(buf_size);
-        else
+        //if( buf_size < CV_MAX_LOCAL_SIZE )
+        //    buf[0] = (float*)cvStackAlloc(buf_size);
+        //else
             CV_CALL( temp_buf = buf[0] = (float*)cvAlloc(buf_size));
 
         for( k = 1; k < 4; k++ )

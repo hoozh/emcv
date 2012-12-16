@@ -115,7 +115,7 @@ struct CvHidHaarClassifierCascade
 };
 
 
-const int icv_object_win_border = 1;
+//const int icv_object_win_border = 1;
 //const float icv_stage_threshold_bias = 0.0001f;
 const int icv_stage_threshold_bias = 419; //0.0001*(2^22)=419.4304
 
@@ -855,9 +855,9 @@ cvHaarDetectObjects( const CvArr* _img,
             const int ystep32x = MAX( 64, factor32x );
             CvSize win_size = { ( cascade->orig_window_size.width * factor32x + 16 )>>5,
                                 ( cascade->orig_window_size.height * factor32x + 16)>>5 };
-            CvRect equ_rect = { 0, 0, 0, 0 };
-            int *p0 = 0, *p1 = 0, *p2 = 0, *p3 = 0;
-            int *pq0 = 0, *pq1 = 0, *pq2 = 0, *pq3 = 0;
+            //CvRect equ_rect = { 0, 0, 0, 0 };
+            //int *p0 = 0, *p1 = 0, *p2 = 0, *p3 = 0;
+            //int *pq0 = 0, *pq1 = 0, *pq2 = 0, *pq3 = 0;
             int pass, stage_offset = 0;
             int stop_height =  ( ((img->rows - win_size.height)<<5)+ (ystep32x>>1) ) / ystep32x;
 
@@ -950,7 +950,7 @@ cvHaarDetectObjects( const CvArr* _img,
     if( min_neighbors != 0 )
     {
         // group retrieved rectangles in order to filter out noise 
-        int ncomp = cvSeqPartition( seq, 0, &idx_seq, is_equal, 0 );
+        int ncomp = cvSeqPartition( seq, 0, &idx_seq, (CvCmpFunc)is_equal, 0 );
         CV_CALL( comps = (CvAvgComp*)cvAlloc( (ncomp+1)*sizeof(comps[0])));
         memset( comps, 0, (ncomp+1)*sizeof(comps[0]));
 

@@ -1700,7 +1700,6 @@ CVAPI(void*) cvLoad( const char* filename,
 #ifdef __cplusplus
 }
 
-#include "cxcore.hpp"
 #endif
 
 #endif /*_CXCORE_H_*/

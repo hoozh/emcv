@@ -396,7 +396,7 @@ cvCloneMatND( const CvMatND* src )
     if( !CV_IS_MATND_HDR( src ))
         CV_ERROR( CV_StsBadArg, "Bad CvMatND header" );
 
-    sizes = (int*)cvStackAlloc( src->dims*sizeof(sizes[0]) );
+    sizes = (int*)cvAlloc( src->dims*sizeof(sizes[0]) );
 
     for( i = 0; i < src->dims; i++ )
         sizes[i] = src->dim[i].size;
@@ -409,6 +409,7 @@ cvCloneMatND( const CvMatND* src )
         CV_CALL( cvCopy( src, dst ));
     }
 
+	cvFree(&sizes);
     __END__;
 
     return dst;
@@ -1983,7 +1984,7 @@ cvPtr1D( const CvArr* arr, int idx, int* _type )
         else
         {
             int i, n = m->dims;
-            int* _idx = (int*)cvStackAlloc(n*sizeof(_idx[0]));
+            int* _idx = (int*)cvAlloc(n*sizeof(_idx[0]));
             
             for( i = n - 1; i >= 0; i-- )
             {
@@ -1992,6 +1993,7 @@ cvPtr1D( const CvArr* arr, int idx, int* _type )
                 idx = t;
             }
             ptr = icvGetNodePtr( (CvSparseMat*)arr, _idx, _type, 1, 0 );
+			cvFree(&_idx);
         }
     }
     else
