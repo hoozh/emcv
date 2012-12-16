@@ -91,7 +91,7 @@ cvLoadImage( const char* filename, int flags)
     if( !filename || strlen(filename) == 0 )
         CV_ERROR( CV_StsNullPtr, "null filename" );
 
- 	p = fopen(filename, "r");
+ 	p = fopen(filename, "rb");
  	if(!p)
  		CV_ERROR( CV_StsNullPtr, "Can not open file" );
 	
