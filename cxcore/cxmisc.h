@@ -9,7 +9,7 @@
 //
 //                 License For Embedded Computer Vision Library
 //
-// Copyright (c) 2008, EMCV Project,
+// Copyright (c) 2008-2012, EMCV Project,
 // Copyright (c) 2000-2007, Intel Corporation,
 // All rights reserved.
 // Third party copyrights are property of their respective owners.
@@ -50,7 +50,19 @@
 #define _CXCORE_MISC_H_
 
 #include <limits.h>
-
+#ifdef __GNUC__
+    #undef alloca
+    #define alloca __builtin_alloca
+#elif defined WIN32 || defined _WIN32 || defined WIN64 || defined _WIN64 || \
+      defined WINCE || defined _MSC_VER || defined __BORLANDC__
+    #include <malloc.h>
+#elif defined HAVE_ALLOCA_H
+    #include <alloca.h>
+#elif defined HAVE_ALLOCA
+    #include <stdlib.h>
+#else
+    #error "No alloca!"
+#endif
 /****************************************************************************************\
 *                              Compile-time tuning parameters                            *
 \****************************************************************************************/
@@ -65,6 +77,7 @@
 #define  CV_MAX_LOCAL_SIZE  \
     (CV_MAX_LOCAL_MAT_SIZE*CV_MAX_LOCAL_MAT_SIZE*(int)sizeof(double))
 
+#ifdef _TMS320C6X
 /* default image row align (in bytes) */
 #define  CV_DEFAULT_IMAGE_ROW_ALIGN  8
 
@@ -77,6 +90,20 @@
 
 /* the alignment of all the allocated buffers */
 #define  CV_MALLOC_ALIGN    8
+#else
+/* default image row align (in bytes) */
+#define  CV_DEFAULT_IMAGE_ROW_ALIGN  4
+
+/* matrices are continuous by default */
+#define  CV_DEFAULT_MAT_ROW_ALIGN  4
+
+/* maximum size of dynamic memory buffer.
+   cvAlloc reports an error if a larger block is requested. */
+#define  CV_MAX_ALLOC_SIZE    (((size_t)1 << (sizeof(size_t)*8-2)))
+
+/* the alignment of all the allocated buffers */
+#define  CV_MALLOC_ALIGN    32
+#end
 
 /* default alignment for dynamic data strucutures, resided in storages. */
 #define  CV_STRUCT_ALIGN    ((int)sizeof(double))
@@ -115,7 +142,7 @@
 
 
 /* ! DO NOT make it an inline function */
-#define cvStackAlloc(size) cvAlignPtr( alloca((size) + CV_MALLOC_ALIGN), CV_MALLOC_ALIGN )
+#define cvStackAlloc(size) cvAlignPtr( (void*)(alloca((size) + CV_MALLOC_ALIGN)), CV_MALLOC_ALIGN )
 
 #if defined _MSC_VER || defined __BORLANDC__
     #define CV_BIG_INT(n)   n##I64

@@ -9,7 +9,7 @@
 //
 //                 License For Embedded Computer Vision Library
 //
-// Copyright (c) 2008, EMCV Project,
+// Copyright (c) 2008-2012, EMCV Project,
 // Copyright (c) 2000-2007, Intel Corporation,
 // All rights reserved.
 // Third party copyrights are property of their respective owners.
@@ -73,7 +73,6 @@ cvThreshold( const void* srcarr, void* dstarr, double thresh, double maxval, int
     case CV_8U:
         register unsigned char ithreshs[4];
         register unsigned char imaxvals[4];
-        register unsigned int binvals;
 	    int ithresh, imaxval;
 	    int idx;
         
@@ -87,12 +86,21 @@ cvThreshold( const void* srcarr, void* dstarr, double thresh, double maxval, int
 		imaxval = (imaxval<0) ? 0 : imaxval;
 		imaxvals[0]=imaxvals[1]=imaxvals[2]=imaxvals[3]=imaxval;
 		
+#ifdef _TMS320C6X
+        register unsigned int binvals;
 		for(idx=0; idx < (src->step*src->height)/4; idx++)
 		{
 			binvals = _cmpgtu4( _mem4_const(src->data.i+idx), _mem4_const(ithreshs) );
 			binvals = _xpnd4( binvals  );
 			_mem4(dst->data.i+idx) = binvals & _mem4_const(imaxvals);
 		}
+#else
+		for(idx=0; idx < (src->step*src->height); idx++)
+		{
+			dst->data.ptr[idx] = (src->data.ptr[idx]>ithresh)? imaxval: 0;
+		}
+
+#endif
         break;
     default:
         CV_ERROR( CV_BadDepth, cvUnsupportedFormat );

@@ -9,7 +9,7 @@
 //
 //                 License For Embedded Computer Vision Library
 //
-// Copyright (c) 2008, EMCV Project,
+// Copyright (c) 2008-2012, EMCV Project,
 // Copyright (c) 2000-2007, Intel Corporation,
 // All rights reserved.
 // Third party copyrights are property of their respective owners.
@@ -43,7 +43,7 @@
 #ifndef _CV_H_
 #define _CV_H_
 
-#include "cxcore.h"
+#include "../cxcore/cxcore.h"
 #include "cvtypes.h"
 
 #ifdef __cplusplus
@@ -89,7 +89,7 @@ CVAPI(void) cvIntegral( const CvArr* image, CvArr* sum,
    dst_height = floor(src_height/2)[+1]
 */
 CVAPI(void)  cvPyrDown( const CvArr* src, CvArr* dst,
-                        int filter CV_DEFAULT(0) );
+                        int filter CV_DEFAULT(CV_GAUSSIAN_5x5) );
 
 /* 
    Up-samples image and smoothes the result with gaussian kernel.
@@ -97,7 +97,7 @@ CVAPI(void)  cvPyrDown( const CvArr* src, CvArr* dst,
    dst_height = src_height*2
 */
 CVAPI(void)  cvPyrUp( const CvArr* src, CvArr* dst,
-                      int filter CV_DEFAULT(0) );
+                      int filter CV_DEFAULT(CV_GAUSSIAN_5x5) );
 
 
 /* Builds the whole pyramid at once. Output array of CvMat headers (levels[*])
@@ -1043,23 +1043,22 @@ CVAPI(CvHaarClassifierCascade*) cvLoadHaarClassifierCascade(
 
 CVAPI(void) cvReleaseHaarClassifierCascade( CvHaarClassifierCascade** cascade );
 
-#define CV_HAAR_DO_CANNY_PRUNING 1
-#define CV_HAAR_SCALE_IMAGE      2
-
 CVAPI(CvSeq*) cvHaarDetectObjects( const CvArr* image,
                      CvHaarClassifierCascade* cascade,
-                     CvMemStorage* storage, double scale_factor CV_DEFAULT(1.1),
+                     CvMemStorage* storage, int scale_factor32x CV_DEFAULT(36),
                      int min_neighbors CV_DEFAULT(3), int flags CV_DEFAULT(0),
                      CvSize min_size CV_DEFAULT(cvSize(0,0)));
 
 /* sets images for haar classifier cascade */
 CVAPI(void) cvSetImagesForHaarClassifierCascade( CvHaarClassifierCascade* cascade,
                                                 const CvArr* sum, const CvArr* sqsum,
-                                                const CvArr* tilted_sum, double scale );
+                                                const CvArr* tilted_sum, int scale32x );
 
 /* runs the cascade on the specified window */
 CVAPI(int) cvRunHaarClassifierCascade( CvHaarClassifierCascade* cascade,
                                       CvPoint pt, int start_stage CV_DEFAULT(0));
+
+CVAPI(CvHaarClassifierCascade *) LoadFixedCascade(const char * sFileName);
 
 /****************************************************************************************\
 *                     Camera Calibration and Rectification functions                     *

@@ -9,7 +9,7 @@
 //
 //                 License For Embedded Computer Vision Library
 //
-// Copyright (c) 2008, EMCV Project,
+// Copyright (c) 2008-2012, EMCV Project,
 // Copyright (c) 2000-2007, Intel Corporation,
 // All rights reserved.
 // Third party copyrights are property of their respective owners.
@@ -318,7 +318,6 @@ CvKalman;
 
 /*********************** Haar-like Object Detection structures **************************/
 #define CV_HAAR_MAGIC_VAL    0x42500000
-#define CV_TYPE_NAME_HAAR    "opencv-haar-classifier"
 
 #define CV_IS_HAAR_CLASSIFIER( haar )                                                    \
     ((haar) != NULL &&                                                                   \
@@ -332,7 +331,7 @@ typedef struct CvHaarFeature
     struct
     {
         CvRect r;
-        float weight;
+        int weight;
     } rect[CV_HAAR_FEATURE_MAX];
 }
 CvHaarFeature;
@@ -341,17 +340,17 @@ typedef struct CvHaarClassifier
 {
     int count;
     CvHaarFeature* haar_feature;
-    float* threshold;
+    int* threshold;
     int* left;
     int* right;
-    float* alpha;
+    int* alpha;
 }
 CvHaarClassifier;
 
 typedef struct CvHaarStageClassifier
 {
     int  count;
-    float threshold;
+    int threshold;
     CvHaarClassifier* classifier;
 
     int next;
@@ -368,7 +367,7 @@ typedef struct CvHaarClassifierCascade
     int  count;
     CvSize orig_window_size;
     CvSize real_window_size;
-    double scale;
+    int scale32x;
     CvHaarStageClassifier* stage_classifier;
     CvHidHaarClassifierCascade* hid_cascade;
 }

@@ -9,7 +9,7 @@
 //
 //                 License For Embedded Computer Vision Library
 //
-// Copyright (c) 2008, EMCV Project,
+// Copyright (c) 2008-2012, EMCV Project,
 // Copyright (c) 2000-2007, Intel Corporation,
 // All rights reserved.
 // Third party copyrights are property of their respective owners.
@@ -59,14 +59,6 @@ const int CV_DEPTH_BYTES[8]={1, 1, 2, 2, 4, 4, 8, 0};
 extern "C" {
 #endif
 
-CVAPI(int) cvSaveImage( const char* filename, const IplImage * image );
-CVAPI(IplImage*) cvLoadImage( const char* filename, int iscolor CV_DEFAULT(0));
-
-// save as Embedded file
-#ifdef DM64X_NETWORK
-CVAPI(int) efs_cvSaveImage( const char* filename, const IplImage * image );
-#endif
-
 /****************************************************************************************\
 *          Array allocation, deallocation, initialization and access to elements         *
 \****************************************************************************************/
@@ -85,6 +77,9 @@ CVAPI(void*)  cvAlloc( size_t size );
 */
 CVAPI(void)   cvFree_( void* ptr );
 #define cvFree(ptr) (cvFree_(*(ptr)), *(ptr)=0)
+
+/* memory info */
+CV_IMPL void cvMemoryInfo(int *use, int *peak);
 
 /* Allocates and initializes IplImage header */
 CVAPI(IplImage*)  cvCreateImageHeader( CvSize size, int depth, int channels );
@@ -1701,8 +1696,11 @@ CVAPI(void*) cvLoad( const char* filename,
                      const char** real_name CV_DEFAULT(NULL) );
 
 
+
 #ifdef __cplusplus
 }
+
+#include "cxcore.hpp"
 #endif
 
-#endif
+#endif /*_CXCORE_H_*/

@@ -9,7 +9,7 @@
 //
 //                 License For Embedded Computer Vision Library
 //
-// Copyright (c) 2008, EMCV Project,
+// Copyright (c) 2008-2012, EMCV Project,
 // Copyright (c) 2000-2007, Intel Corporation,
 // All rights reserved.
 // Third party copyrights are property of their respective owners.
@@ -51,7 +51,7 @@
 const signed char icvDepthToType[] =
 {
     -1, -1, CV_8U, CV_8S, CV_16U, CV_16S, -1, -1,
-    CV_32F, CV_32S, -1, -1, -1, -1, -1, -1, CV_64F, -1
+    CV_32F, CV_32S, -1, -1, -1, -1, -1, -1, CV_64F, CV_64S
 };
 
 const float icv8x32fTab[] =

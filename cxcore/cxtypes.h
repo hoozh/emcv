@@ -9,7 +9,7 @@
 //
 //                 License For Embedded Computer Vision Library
 //
-// Copyright (c) 2008, EMCV Project,
+// Copyright (c) 2008-2012, EMCV Project,
 // Copyright (c) 2000-2007, Intel Corporation,
 // All rights reserved.
 // Third party copyrights are property of their respective owners.
@@ -42,6 +42,10 @@
 
 #ifndef _CXCORE_TYPES_H_
 #define _CXCORE_TYPES_H_
+
+#ifndef _TMS320C6X
+#  define restrict
+#endif
 
 #if !defined _CRT_SECURE_NO_DEPRECATE && _MSC_VER > 1300
 #define _CRT_SECURE_NO_DEPRECATE /* to avoid multiple Visual Studio 2005 warnings */
@@ -138,6 +142,15 @@
     #define CVAPI(rettype) CV_EXTERN_C CV_EXPORTS rettype CV_CDECL
 #endif
 
+#if defined _MSC_VER || defined __BORLANDC__ || defined __ARM
+typedef __int64 int64;
+typedef unsigned __int64 uint64;
+#else
+typedef long long int64;
+typedef unsigned long long uint64;
+#endif
+
+
 #ifndef HAVE_IPL
 typedef unsigned char uchar;
 typedef unsigned short ushort;
@@ -155,6 +168,14 @@ typedef union Cv32suf
     float f;
 }
 Cv32suf;
+
+typedef union Cv64suf
+{
+    int64 i;
+    uint64 u;
+    double f;
+}
+Cv64suf;
 
 /****************************************************************************************\
 *                             Common macros and inline functions                         *
@@ -189,7 +210,11 @@ Cv32suf;
 
 CV_INLINE  int  cvRound( double value )
 {
-	return  int(floor(value+0.5));
+    if(value >= 0.0)
+    {
+        return int(floor(value + 0.5));
+    }
+    return int(ceil(value - 0.5));
 }
 
 
@@ -229,6 +254,7 @@ CV_INLINE  int  cvCeil( double value )
 #define IPL_DEPTH_8S  (IPL_DEPTH_SIGN| 8)
 #define IPL_DEPTH_16S (IPL_DEPTH_SIGN|16)
 #define IPL_DEPTH_32S (IPL_DEPTH_SIGN|32)
+#define IPL_DEPTH_64S (IPL_DEPTH_SIGN|64)
 
 #define IPL_DATA_ORDER_PIXEL  0
 #define IPL_DATA_ORDER_PLANE  1
@@ -349,7 +375,8 @@ IplConvKernelFP;
 \****************************************************************************************/
 
 #define CV_CN_MAX     64
-#define CV_CN_SHIFT   3
+//#define CV_CN_SHIFT   3
+#define CV_CN_SHIFT   4
 #define CV_DEPTH_MAX  (1 << CV_CN_SHIFT)
 
 #define CV_8U   0
@@ -360,6 +387,7 @@ IplConvKernelFP;
 #define CV_32F  5
 #define CV_64F  6
 #define CV_USRTYPE1 7
+#define CV_64S  6
 
 #define CV_MAKETYPE(depth,cn) ((depth) + (((cn)-1) << CV_CN_SHIFT))
 #define CV_MAKE_TYPE CV_MAKETYPE
@@ -393,6 +421,13 @@ IplConvKernelFP;
 #define CV_32SC3 CV_MAKETYPE(CV_32S,3)
 #define CV_32SC4 CV_MAKETYPE(CV_32S,4)
 #define CV_32SC(n) CV_MAKETYPE(CV_32S,(n))
+
+#define CV_64SC1 CV_MAKETYPE(CV_64S,1)
+#define CV_64SC2 CV_MAKETYPE(CV_64S,2)
+#define CV_64SC3 CV_MAKETYPE(CV_64S,3)
+#define CV_64SC4 CV_MAKETYPE(CV_64S,4)
+#define CV_64SC(n) CV_MAKETYPE(CV_64S,(n))
+
 
 #define CV_32FC1 CV_MAKETYPE(CV_32F,1)
 #define CV_32FC2 CV_MAKETYPE(CV_32F,2)
@@ -835,7 +870,14 @@ CV_INLINE  CvPoint2D32f  cvPointTo32f( CvPoint point )
     return cvPoint2D32f( (float)point.x, (float)point.y );
 }
 
+CV_INLINE  CvPoint  cvPointFrom32f( CvPoint2D32f point )
+{
+    CvPoint ipt;
+    ipt.x = cvRound(point.x);
+    ipt.y = cvRound(point.y);
 
+    return ipt;
+}
 
 typedef struct CvPoint3D32f
 {

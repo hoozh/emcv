@@ -9,7 +9,7 @@
 //
 //                 License For Embedded Computer Vision Library
 //
-// Copyright (c) 2008, EMCV Project,
+// Copyright (c) 2008-2012, EMCV Project,
 // Copyright (c) 2000-2007, Intel Corporation,
 // All rights reserved.
 // Third party copyrights are property of their respective owners.
@@ -49,7 +49,7 @@
     #pragma warning( disable: 4711 4710 4514 )
 #endif
 
-#include "cv.h"
+#include "./cv.h"
 #include "../cxcore/cxmisc.h"
 #include <math.h>
 #include <assert.h>
@@ -82,6 +82,9 @@ extern const float icv8x32fTab_cv[];
 // (-128.f)^2 ... (255.f)^2
 extern const float icv8x32fSqrTab[];
 #define CV_8TO32F_SQR(x)  icv8x32fSqrTab[(x)+128]
+
+extern const unsigned short my8x16uSqrTab[];
+#define CV_8TO16U_SQR(x)  my8x16uSqrTab[(x)+128]
 
 CV_INLINE  CvDataType icvDepthToDataType( int type );
 CV_INLINE  CvDataType icvDepthToDataType( int type )

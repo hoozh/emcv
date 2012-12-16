@@ -9,7 +9,7 @@
 //
 //                 License For Embedded Computer Vision Library
 //
-// Copyright (c) 2008, EMCV Project,
+// Copyright (c) 2008-2012, EMCV Project,
 // Copyright (c) 2000-2007, Intel Corporation,
 // All rights reserved.
 // Third party copyrights are property of their respective owners.
@@ -92,6 +92,8 @@ cvAbsDiff( const void* srcarr1, const void* srcarr2, void* dstarr )
 		p1 = src1->data.ptr ; 
 		p2 = src2->data.ptr; 
 		pdst = dst->data.ptr; 
+		
+#ifdef _TMS320C6X
        	for (idx = 0; idx < size.width/pixel_size; idx+=4)
        	{
        		_amem4(pdst) = _subabs4(_amem4_const(p1), _amem4_const(p2) );
@@ -99,6 +101,15 @@ cvAbsDiff( const void* srcarr1, const void* srcarr2, void* dstarr )
        		p2 += 4;
        		pdst += 4;
        	}	
+#else
+       	for (idx = 0; idx < size.width/pixel_size; idx+=1)
+       	{
+			(*pdst) = abs((*p1)-(*p2));
+			pdst++;
+			p1++;
+			p2++;
+       	}	
+#endif
     }
 	else if(depth == CV_32S)        
 	{
@@ -109,9 +120,14 @@ cvAbsDiff( const void* srcarr1, const void* srcarr2, void* dstarr )
 		p1 = src1->data.i; 
 		p2 = src2->data.i; 
 		pdst = dst->data.i;
+
        	for (idx = 0; idx < size.width/pixel_size; idx++)
        	{
+#ifdef _TMS320C6X
        		*pdst = _abs(_ssub(*p1, *p2));
+#else
+       		*pdst = abs((*p1)-(*p2));
+#endif
        		p1 += 1;
        		p2 += 1;
        		pdst += 1;
