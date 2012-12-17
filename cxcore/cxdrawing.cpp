@@ -1570,7 +1570,7 @@ cvPolyLine( void *img, CvPoint **pts, int *npts,
     if( !pts )
         CV_ERROR( CV_StsNullPtr, "" );
 
-    if( npts <= 0 )
+    if( npts == 0 )
         CV_ERROR( CV_StsNullPtr, "" );
 
     if( shift < 0 || XY_SHIFT < shift )

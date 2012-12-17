@@ -40,6 +40,7 @@
 // Contributors:
 //    * Shiqi Yu (Shenzhen Institute of Advanced Technology, Chinese Academy of Sciences)
 
+#ifdef _TMS320C6X
 
 #include "cv.h"
 
@@ -294,4 +295,4 @@ cvDilate( const void* src, void* dst, IplConvKernel* element, int iterations )
     icvMorphOp( src, dst, element, iterations, 1 );
 }
 
-
+#endif //_TMS320C6X
