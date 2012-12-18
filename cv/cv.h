@@ -1182,8 +1182,5 @@ CVAPI(void) cvComputeCorrespondEpilines( const CvMat* points,
 }
 #endif
 
-#ifdef __cplusplus
-#include "cv.hpp"
-#endif
 
 #endif /*_CV_H_*/
