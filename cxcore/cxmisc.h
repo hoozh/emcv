@@ -90,7 +90,7 @@
 #define  CV_MAX_ALLOC_SIZE    (((size_t)1 << (sizeof(size_t)*8-2)))
 
 /* the alignment of all the allocated buffers */
-#define  CV_MALLOC_ALIGN    8
+#define  CV_MALLOC_ALIGN    64
 #else
 /* default image row align (in bytes) */
 #define  CV_DEFAULT_IMAGE_ROW_ALIGN  4

@@ -81,8 +81,11 @@ cvCopy( const void* srcarr, void* dstarr, const void* maskarr )
     __BEGIN__;
 
     int pix_size;
-    CvMat *src = (CvMat*)srcarr;
-    CvMat *dst = (CvMat*)dstarr;
+    CvMat srcstub, *src = (CvMat*)srcarr;
+    CvMat dststub, *dst = (CvMat*)dstarr;
+    CV_CALL( src = cvGetMat( srcarr, &srcstub ));
+    CV_CALL( dst = cvGetMat( dstarr, &dststub ));    
+    
     CvSize size;
 
     if( !CV_IS_MAT(src) || !CV_IS_MAT(dst) )
