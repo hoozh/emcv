@@ -165,7 +165,7 @@ CV_IMPL int
 cvGuiBoxReport( int code, const char *func_name, const char *err_msg,
                 const char *file, int line, void* )
 {
-#if !defined WIN32 && !defined WIN64
+#if 1 //!defined WIN32 && !defined WIN64
     return cvStdErrReport( code, func_name, err_msg, file, line, 0 );
 #else
     if( code != CV_StsBackTrace && code != CV_StsAutoTrace )
