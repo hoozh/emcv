@@ -50,16 +50,7 @@
 
 #include "_cxcore.h"
 
-static struct
-{
-    Cv_iplCreateImageHeader  createHeader;
-    Cv_iplAllocateImageData  allocateData;
-    Cv_iplDeallocate  deallocate;
-    Cv_iplCreateROI  createROI;
-    Cv_iplCloneImage  cloneImage;
-}
-CvIPL;
-
+/*
 // Makes the library use native IPL image allocators
 CV_IMPL void
 cvSetIPLAllocators( Cv_iplCreateImageHeader createHeader,
@@ -87,7 +78,7 @@ cvSetIPLAllocators( Cv_iplCreateImageHeader createHeader,
 
     __END__;
 }
-
+*/
 
 /****************************************************************************************\
 *                               CvMat creation and basic operations                      *
@@ -982,12 +973,12 @@ cvCreateData( CvArr* arr )
         if( img->imageData != 0 )
             CV_ERROR( CV_StsError, "Data is already allocated" );
 
-        if( !CvIPL.allocateData )
+        //if( !CvIPL.allocateData )
         {
             CV_CALL( img->imageData = img->imageDataOrigin = 
                         (char*)cvAlloc( (size_t)img->imageSize ));
         }
-        else
+/*        else
         {
             int depth = img->depth;
             int width = img->width;
@@ -1003,6 +994,7 @@ cvCreateData( CvArr* arr )
             img->width = width;
             img->depth = depth;
         }
+*/
     }
     else if( CV_IS_MATND_HDR( arr ))
     {
@@ -1158,16 +1150,16 @@ cvReleaseData( CvArr* arr )
     {
         IplImage* img = (IplImage*)arr;
 
-        if( !CvIPL.deallocate )
+        //if( !CvIPL.deallocate )
         {
             char* ptr = img->imageDataOrigin;
             img->imageData = img->imageDataOrigin = 0;
             cvFree( &ptr );
         }
-        else
-        {
-            CvIPL.deallocate( img, IPL_IMAGE_DATA );
-        }
+        //else
+        //{
+        //    CvIPL.deallocate( img, IPL_IMAGE_DATA );
+        //}
     }
     else
     {
@@ -3237,7 +3229,7 @@ static IplROI* icvCreateROI( int coi, int xOffset, int yOffset, int width, int h
 
     __BEGIN__;
 
-    if( !CvIPL.createROI )
+    //if( !CvIPL.createROI )
     {
         CV_CALL( roi = (IplROI*)cvAlloc( sizeof(*roi)));
 
@@ -3247,10 +3239,10 @@ static IplROI* icvCreateROI( int coi, int xOffset, int yOffset, int width, int h
         roi->width = width;
         roi->height = height;
     }
-    else
-    {
-        roi = CvIPL.createROI( coi, xOffset, yOffset, width, height );
-    }
+    //else
+    //{
+    //    roi = CvIPL.createROI( coi, xOffset, yOffset, width, height );
+    //}
 
     __END__;
 
@@ -3289,12 +3281,13 @@ cvCreateImageHeader( CvSize size, int depth, int channels )
 
     __BEGIN__;
 
-    if( !CvIPL.createHeader )
+    //if( !CvIPL.createHeader )
     {
         CV_CALL( img = (IplImage *)cvAlloc( sizeof( *img )));
         CV_CALL( cvInitImageHeader( img, size, depth, channels, IPL_ORIGIN_TL,
                                     CV_DEFAULT_IMAGE_ROW_ALIGN ));
     }
+/*
     else
     {
         char *colorModel;
@@ -3307,7 +3300,7 @@ cvCreateImageHeader( CvSize size, int depth, int channels )
                                   CV_DEFAULT_IMAGE_ROW_ALIGN,
                                   size.width, size.height, 0, 0, 0, 0 );
     }
-
+*/
     __END__;
 
     if( cvGetErrStatus() < 0 && img )
@@ -3420,15 +3413,15 @@ cvReleaseImageHeader( IplImage** image )
         IplImage* img = *image;
         *image = 0;
         
-        if( !CvIPL.deallocate )
-        {
+        //if( !CvIPL.deallocate )
+        //{
             cvFree( &img->roi );
             cvFree( &img );
-        }
-        else
-        {
-            CvIPL.deallocate( img, IPL_IMAGE_HEADER | IPL_IMAGE_ROI );
-        }
+        //}
+        //else
+        //{
+        //    CvIPL.deallocate( img, IPL_IMAGE_HEADER | IPL_IMAGE_ROI );
+        //}
     }
     __END__;
 }
@@ -3519,15 +3512,15 @@ cvResetImageROI( IplImage* image )
 
     if( image->roi )
     {
-        if( !CvIPL.deallocate )
+        //if( !CvIPL.deallocate )
         {
             cvFree( &image->roi );
         }
-        else
-        {
-            CvIPL.deallocate( image, IPL_IMAGE_ROI );
-            image->roi = 0;
-        }
+        //else
+        //{
+        //    CvIPL.deallocate( image, IPL_IMAGE_ROI );
+        //    image->roi = 0;
+        //}
     }
 
     __END__;
@@ -3617,7 +3610,7 @@ cvCloneImage( const IplImage* src )
     if( !CV_IS_IMAGE_HDR( src ))
         CV_ERROR( CV_StsBadArg, "Bad image header" );
 
-    if( !CvIPL.cloneImage )
+    //if( !CvIPL.cloneImage )
     {
         CV_CALL( dst = (IplImage*)cvAlloc( sizeof(*dst)));
 
@@ -3638,10 +3631,10 @@ cvCloneImage( const IplImage* src )
             memcpy( dst->imageData, src->imageData, size );
         }
     }
-    else
-    {
-        dst = CvIPL.cloneImage( src );
-    }
+    //else
+    //{
+    //    dst = CvIPL.cloneImage( src );
+    //}
 
     __END__;
 
