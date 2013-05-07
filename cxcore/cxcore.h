@@ -9,7 +9,7 @@
 //
 //                 License For Embedded Computer Vision Library
 //
-// Copyright (c) 2008-2012, EMCV Project,
+// Copyright (c) 2008-2013, EMCV Project,
 // Copyright (c) 2000-2007, Intel Corporation,
 // All rights reserved.
 // Third party copyrights are property of their respective owners.
@@ -77,6 +77,7 @@ CVAPI(void*)  cvAlloc( size_t size );
 */
 CVAPI(void)   cvFree_( void* ptr );
 #define cvFree(ptr) (cvFree_(*(ptr)), *(ptr)=0)
+//CVAPI(int)   cvFree( void** ptr );
 
 /* memory info */
 CV_IMPL void cvMemoryInfo(int *use, int *peak);
