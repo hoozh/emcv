@@ -995,7 +995,7 @@ cvHaarDetectObjects( const CvArr* _img,
             for( j = 0; j < seq2->total; j++ )
             {
                 CvAvgComp r2 = *(CvAvgComp*)cvGetSeqElem( seq2, j );
-                int distance = (r2.rect.width *12+5)/10;//cvRound( r2.rect.width * 0.2 );
+                int distance = (r2.rect.width *2+5)/10;//cvRound( r2.rect.width * 0.2 );
             
                 if( i != j &&
                     r1.rect.x >= r2.rect.x - distance &&
